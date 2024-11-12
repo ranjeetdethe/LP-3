@@ -1,0 +1,86 @@
+import heapq
+# Import the `heapq` module to use a priority queue (min-heap) for node sorting.
+
+class node:
+    # Define a `node` class to represent each character and its frequency in the Huffman Tree.
+
+    def __init__(self, freq, symbol, left=None, right=None):
+        # Initialize the node with frequency, symbol, left child, and right child.
+        
+        self.freq = freq
+        # Store the frequency of the character.
+
+        self.symbol = symbol
+        # Store the symbol (character) associated with the frequency.
+
+        self.left = left
+        # Store the left child node (used in building the tree).
+
+        self.right = right
+        # Store the right child node (used in building the tree).
+
+        self.huff = ''
+        # Store the Huffman binary code for this node, initially empty.
+
+    def __lt__(self, nxt):
+        # Define a less-than method to compare nodes by frequency when using `heapq`.
+        
+        return self.freq < nxt.freq
+        # Return True if this node's frequency is less than the next node's frequency.
+
+def printNodes(node, val=''):
+    # Define a function to print the Huffman codes for each character by traversing the tree.
+    # `val` represents the Huffman code accumulated so far.
+
+    newVal = val + str(node.huff)
+    # Append the current node’s Huffman code (0 or 1) to the accumulated Huffman code.
+
+    if(node.left):
+        printNodes(node.left, newVal)
+        # Recursively call `printNodes` on the left child, adding to the Huffman code.
+
+    if(node.right):
+        printNodes(node.right, newVal)
+        # Recursively call `printNodes` on the right child, adding to the Huffman code.
+
+    if(not node.left and not node.right):
+        print(f"{node.symbol} -> {newVal}")
+        # If the node has no children, it’s a leaf node. Print the character and its Huffman code.
+
+chars = ['a', 'b', 'c', 'd', 'e', 'f']
+# Define the list of characters to encode.
+
+freq = [5, 9, 12, 13, 16, 45]
+# Define the frequency for each character, where each frequency corresponds to a character in `chars`.
+
+nodes = []
+# Create an empty list to store nodes for the heap.
+
+for x in range(len(chars)):
+    heapq.heappush(nodes, node(freq[x], chars[x]))
+    # Create a `node` for each character and frequency, then push it to the min-heap `nodes`.
+
+while len(nodes) > 1:
+    # Loop until there is only one node left in the heap, which will be the root of the Huffman Tree.
+
+    left = heapq.heappop(nodes)
+    # Remove the node with the lowest frequency from the heap (left child).
+
+    right = heapq.heappop(nodes)
+    # Remove the next lowest frequency node from the heap (right child).
+
+    left.huff = 0
+    # Assign '0' as the Huffman code for the left child.
+
+    right.huff = 1
+    # Assign '1' as the Huffman code for the right child.
+
+    newNode = node(left.freq + right.freq, left.symbol + right.symbol, left, right)
+    # Create a new node with the combined frequency of the two nodes.
+    # This node's symbol is a combination of the left and right symbols, with left and right as children.
+
+    heapq.heappush(nodes, newNode)
+    # Push the new node back into the heap.
+
+printNodes(nodes[0])
+# Call `printNodes` with the root of the tree to print each character's Huffman code.

@@ -1,0 +1,74 @@
+def print_board(board):
+    # Define a function to print the chessboard with queens' positions.
+
+    for row in board:
+        print(' '.join(row))
+        # Join each cell in the row with a space and print it to show the board in a readable format.
+
+    print()
+    # Print a blank line after the board for better readability.
+
+def is_safe(board, row, col):
+    # Define a function to check if it's safe to place a queen at the specified row and column.
+
+    for i in range(col):
+        if board[row][i] == 'Q':
+            return False
+        # Check all cells in the current row to the left of the column for another queen.
+
+    for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
+        if board[i][j] == 'Q':
+            return False
+        # Check the upper diagonal to the left for another queen.
+
+    for i, j in zip(range(row, len(board)), range(col, -1, -1)):
+        if board[i][j] == 'Q':
+            return False
+        # Check the lower diagonal to the left for another queen.
+
+    return True
+    # If no queens are found that threaten this position, return True.
+
+def solve_n_queens(board, col):
+    # Define a function to try to solve the N-Queens problem starting from the given column.
+
+    if col >= len(board):
+        print_board(board)
+        return True
+        # If all queens are placed successfully, print the board and return True.
+
+    for i in range(len(board)):
+        # Try to place a queen in each row of the current column.
+
+        if is_safe(board, i, col):
+            # Check if placing a queen at row `i` and current column is safe.
+
+            board[i][col] = 'Q'
+            # Place the queen in the board at the safe position.
+
+            if solve_n_queens(board, col + 1):
+                return True
+            # Recursively try to place the remaining queens. If successful, return True.
+
+            board[i][col] = '.'  # Backtrack
+            # Remove the queen (backtrack) if placing the queen at this position doesn't lead to a solution.
+
+    return False
+    # Return False if no valid queen placement is possible in this column.
+
+def main():
+    n = 8
+    # Set the size of the chessboard (8 for an 8x8 board).
+
+    board = [['.' for _ in range(n)] for _ in range(n)]
+    # Initialize an empty n x n board with '.' in each cell.
+
+    board[0][0] = 'Q'
+    # Place the first queen at a predefined position (0, 0).
+
+    if not solve_n_queens(board, 1):
+        print("No solution found.")
+        # Start solving from the second column (col = 1). If no solution exists, print a message.
+
+main()
+# Call the main function to start the program.

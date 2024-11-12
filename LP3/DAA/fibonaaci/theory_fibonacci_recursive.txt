@@ -1,0 +1,55 @@
+def fibonacci_recursive(n, step_count=[0]):
+    # Define a recursive function to calculate the nth Fibonacci number.
+    # The step_count list is used to keep track of how many recursive calls are made.
+
+    step_count[0] += 1
+    # Increment the step count each time the function is called.
+
+    if n <= 1:
+        return n
+    # Base case: if n is 0 or 1, return n (as Fibonacci(0) = 0 and Fibonacci(1) = 1).
+    
+    return fibonacci_recursive(n - 1, step_count) + fibonacci_recursive(n - 2, step_count)
+    # Recursive case: return the sum of the two previous Fibonacci numbers (n-1 and n-2).
+
+def fibonacci_iterative(n):
+    # Define an iterative function to calculate the nth Fibonacci number.
+    
+    step_count = 0
+    # Initialize a counter to keep track of the number of steps in the loop.
+
+    a = 0
+    b = 1
+    # Initialize two variables: 'a' to store Fibonacci(0) and 'b' to store Fibonacci(1).
+
+    for _ in range(n):
+        step_count += 1
+        # Increment the step count for each iteration of the loop.
+
+        temp = a + b
+        # Calculate the next Fibonacci number by adding 'a' and 'b'.
+
+        a = b
+        b = temp
+        # Move 'a' to the value of 'b', and update 'b' to the new Fibonacci number in 'temp'.
+
+    return a, step_count
+    # Return the nth Fibonacci number (now stored in 'a') and the total step count.
+
+n = int(input("Enter the term number: "))
+# Prompt the user to enter the Fibonacci term they want to calculate and store it as an integer in 'n'.
+
+recursive_steps = [0]
+# Create a list with a single element, 0, to store the step count for the recursive function.
+
+fib_recursive = fibonacci_recursive(n, recursive_steps)
+# Call the recursive Fibonacci function with 'n' and 'recursive_steps' to get the Fibonacci number and step count.
+
+print(f"Recursive: Fibonacci({n}) = {fib_recursive}, Steps = {recursive_steps[0]}")
+# Print the result of the recursive calculation, showing the Fibonacci number and the number of steps.
+
+fib_iterative, iterative_steps = fibonacci_iterative(n)
+# Call the iterative Fibonacci function with 'n' to get both the Fibonacci number and the step count.
+
+print(f"Iterative: Fibonacci({n}) = {fib_iterative}, Steps = {iterative_steps}")
+# Print the result of the iterative calculation, showing the Fibonacci number and the number of steps.

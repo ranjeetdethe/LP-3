@@ -1,0 +1,104 @@
+class Item:
+    # Define an Item class to store value, weight, and value-to-weight ratio for each item.
+
+    def __init__(self, value, weight):
+        # Initialize the item with its value and weight.
+
+        self.value = value
+        # Store the value of the item.
+
+        self.weight = weight
+        # Store the weight of the item.
+
+        self.ratio = value / weight
+        # Calculate and store the value-to-weight ratio, used to prioritize items in the knapsack.
+
+def fractional_knapsack(values, weights, capacity):
+    # Define the fractional_knapsack function to maximize the total value within a given weight capacity.
+
+    items = [Item(values[i], weights[i]) for i in range(len(values))]
+    # Create a list of Item objects using the provided values and weights for each item.
+
+    items.sort(key=lambda x: x.ratio, reverse=True)
+    # Sort items by their value-to-weight ratio in descending order to prioritize higher ratios.
+
+    total_value = 0.0
+    # Initialize total_value to keep track of the total value added to the knapsack.
+
+    for item in items:
+        # Loop through each item in the sorted list.
+
+        if capacity == 0:
+            # If the knapsack capacity reaches zero, stop the loop as no more items can be added.
+
+            break
+
+        if item.weight <= capacity:
+            # If the entire item can fit within the remaining capacity:
+
+            capacity -= item.weight
+            # Subtract the item's weight from the knapsack's remaining capacity.
+
+            total_value += item.value
+            # Add the item's full value to the total_value.
+        
+        else:
+            # If only part of the item can fit in the remaining capacity:
+
+            total_value += item.ratio * capacity
+            # Add the proportional value of the item's weight that fits into the knapsack.
+
+            capacity = 0
+            # Set capacity to zero as the knapsack is now full.
+
+    return total_value
+    # Return the maximum value achieved within the given capacity.
+
+while True:
+    # Begin a loop to allow repeated input until the user chooses to exit.
+
+    try:
+        print("Press Ctrl+C to terminate...")
+        # Prompt the user to end the program using Ctrl+C.
+
+        n = int(input('Enter number of items: '))
+        # Ask the user for the number of items and store it as an integer.
+
+        values = [int(i) for i in input("Enter values of items: ").split()]
+        # Prompt the user for the values of each item and store them as a list of integers.
+
+        weights = [int(i) for i in input("Enter weights of items: ").split()]
+        # Prompt the user for the weights of each item and store them as a list of integers.
+
+        capacity = int(input("Enter maximum weight: "))
+        # Ask the user for the knapsack's maximum weight capacity and store it as an integer.
+
+        if len(values) != n or len(weights) != n:
+            # Verify that the number of values and weights matches the number of items.
+
+            print("Error: The number of values and weights must match the number of items.")
+            # Display an error message if there’s a mismatch.
+
+            continue
+            # Skip to the next iteration of the loop if there’s an error in input.
+
+        maximum_value = fractional_knapsack(values, weights, capacity)
+        # Call the fractional_knapsack function to calculate the maximum possible value within capacity.
+
+        print('The maximum value of items that can be carried:', maximum_value)
+        # Display the maximum value that can be achieved with the given items and capacity.
+
+    except KeyboardInterrupt:
+        # Catch a KeyboardInterrupt (Ctrl+C) to exit the program gracefully.
+
+        print("\nTerminating the program.")
+        # Print a termination message.
+
+        break
+        # Exit the loop and end the program.
+
+    except Exception as e:
+        # Catch any other unexpected errors to avoid crashing.
+
+        print(f"An error occurred: {e}")
+        # Print an error message describing the exception.

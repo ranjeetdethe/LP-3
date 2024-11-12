@@ -1,0 +1,64 @@
+def knapsack(values, weights, capacity):
+    # Define a function called 'knapsack' that takes a list of values, a list of weights, and a capacity limit as inputs.
+    
+    n = len(values)
+    # Get the number of items by finding the length of the values list.
+    
+    dp = [[0 for _ in range(capacity + 1)] for _ in range(n + 1)]
+    # Create a 2D array (dp) to store the maximum value possible for each item and each weight capacity.
+    # Initialize all values to 0, with rows representing items and columns representing capacities.
+
+    for i in range(1, n + 1):
+        # Loop over each item, starting from the first item up to the last item.
+        
+        for w in range(1, capacity + 1):
+            # For each item, loop through each possible weight capacity from 1 up to the given capacity.
+            
+            if weights[i - 1] <= w:
+                # Check if the current item's weight is less than or equal to the current weight capacity.
+                
+                dp[i][w] = max(dp[i - 1][w], dp[i - 1][w - weights[i - 1]] + values[i - 1])
+                # If it fits, calculate the maximum value by either:
+                # a) Not including the item (dp[i-1][w]) or
+                # b) Including the item and adding its value to the max value for remaining weight (dp[i-1][w - weights[i-1]] + values[i-1]).
+                # Store the maximum of these two options in dp[i][w].
+                
+            else:
+                dp[i][w] = dp[i - 1][w]
+                # If the item’s weight is too big for the current capacity, just carry forward the previous item's max value for this weight.
+
+    return dp[n][capacity]
+    # Return the maximum value we can get with the given items and capacity from the last cell of the dp table.
+
+def main():
+    # Define the main function, which will handle input and output.
+    
+    n = int(input("Enter the number of items: "))
+    # Prompt the user to enter the number of items and store it as an integer in 'n'.
+    
+    values = [int(i) for i in input("Enter values of items: ").split()]
+    # Prompt the user to enter the values of each item, separated by spaces, and store them in the 'values' list.
+    
+    weights = [int(i) for i in input("Enter weights of items: ").split()]
+    # Prompt the user to enter the weights of each item, separated by spaces, and store them in the 'weights' list.
+    
+    capacity = int(input("Enter the maximum capacity of the knapsack: "))
+    # Prompt the user to enter the maximum capacity of the knapsack and store it as an integer in 'capacity'.
+
+    if len(values) != n or len(weights) != n:
+        # Check if the number of values and weights entered matches the number of items.
+        
+        print("Error: The number of values and weights must match the number of items.")
+        # If they don’t match, display an error message and stop the program.
+        
+        return
+        # Exit the function early due to the input error.
+
+    max_value = knapsack(values, weights, capacity)
+    # Call the knapsack function with the values, weights, and capacity to get the maximum value and store it in 'max_value'.
+    
+    print("The maximum value that can be obtained in the knapsack is:", max_value)
+    # Print the result, showing the maximum value that can be achieved with the given items and capacity.
+
+main()
+# Call the main function to start the program.

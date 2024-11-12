@@ -1,0 +1,138 @@
+class Job:
+    # Define a Job class to represent each job with an ID, deadline, and profit.
+
+    def __init__(self, id, deadline, profit):
+        # Initialize the job with its ID, deadline, and profit.
+
+        self.id = id
+        # Store the ID of the job.
+
+        self.deadline = deadline
+        # Store the deadline of the job, which is the last time it can be completed.
+
+        self.profit = profit
+        # Store the profit gained if the job is completed on or before its deadline.
+
+def job_sequencing_with_deadlines(jobs):
+    # Define a function to schedule jobs to maximize profit within given deadlines.
+
+    jobs.sort(key=lambda x: x.profit, reverse=True)
+    # Sort jobs by profit in descending order so that higher-profit jobs are considered first.
+
+    max_deadline = max(job.deadline for job in jobs)
+    # Determine the maximum deadline among all jobs to define the schedule length.
+
+    result = [-1] * max_deadline
+    # Initialize a result list to store job IDs at each time slot, using -1 as empty slots.
+
+    slot_occupied = [False] * max_deadline
+    # Initialize a list to track which slots are occupied, with False meaning unoccupied.
+
+    total_profit = 0
+    # Initialize total_profit to keep track of the total profit from scheduled jobs.
+
+    for job in jobs:
+        # Loop through each job in the sorted list.
+
+        for slot in range(min(job.deadline - 1, max_deadline - 1), -1, -1):
+            # Try to find a free slot for the job, starting from its latest allowed slot.
+
+            if not slot_occupied[slot]:
+                # If the slot is not occupied:
+
+                result[slot] = job.id
+                # Schedule the job by placing its ID in the result list at the chosen slot.
+
+                slot_occupied[slot] = True
+                # Mark the slot as occupied.
+
+                total_profit += job.profit
+                # Add the job's profit to total_profit since the job is now scheduled.
+
+                break
+                # Break the inner loop as the job has been scheduled.
+
+    scheduled_jobs = [job_id for job_id in result if job_id != -1]
+    # Collect only the scheduled job IDs from the result list, ignoring empty slots.
+
+    return scheduled_jobs, total_profit
+    # Return the list of scheduled job IDs and the total profit achieved.
+
+jobs = [
+    Job('A', 2, 100),
+    Job('B', 1, 19),
+    Job('C', 2, 27),
+    Job('D', 1, 25),
+    Job('E', 3, 15),
+]
+# Define a list of Job objects with ID, deadline, and profit for each job.
+
+scheduled_jobs, total_profit = job_sequencing_with_deadlines(jobs)
+# Call the job_sequencing_with_deadlines function with the list of jobs.
+
+print("Scheduled Jobs:", scheduled_jobs)
+# Print the list of job IDs that were scheduled.
+
+print("Total Profit:", total_profit)
+# Print the total profit from the scheduled jobs.
+
+
+### Job Sequencing with Deadlines (Using Greedy Method)
+
+**Problem:** 
+We have a list of jobs, and each job has a:
+  - **Profit:** The amount we earn if we complete the job on time.
+  - **Deadline:** The latest time by which the job should be finished.
+  
+The goal is to schedule the jobs in such a way that we maximize the total profit while meeting each job’s deadline.
+
+**Greedy Approach:** 
+The greedy method is used here to prioritize jobs that give the highest profit first. We select jobs in a way that maximizes profit at each step.
+
+### Steps for the Greedy Approach
+
+1. **Sort Jobs by Profit:** 
+   - First, arrange all the jobs in order from highest to lowest profit. This way, we try to complete the most profitable jobs first.
+
+2. **Use a Schedule Array:**
+   - Create an array to keep track of time slots (each slot can represent a time unit or deadline).
+   - Each slot in this array represents a potential job position up to the maximum deadline.
+   
+3. **Place Jobs in the Schedule:**
+   - For each job (starting from the highest profit), check if there’s an available slot before its deadline.
+   - If there’s an open slot (within or before its deadline), place the job in that slot.
+   - If a slot is not available within the deadline, move to the next job in the list.
+
+4. **Calculate Total Profit:**
+   - As we place each job into the schedule, add its profit to the total profit.
+
+### Example Walkthrough
+
+Suppose we have these jobs:
+
+- Job A: Deadline = 2, Profit = 100
+- Job B: Deadline = 1, Profit = 19
+- Job C: Deadline = 2, Profit = 27
+- Job D: Deadline = 1, Profit = 25
+- Job E: Deadline = 3, Profit = 15
+
+**Step-by-Step Solution:**
+
+1. **Sort by Profit:** After sorting by profit, our jobs look like this:
+   - Job A (100), Job C (27), Job D (25), Job B (19), Job E (15)
+   
+2. **Initialize Schedule and Total Profit:**
+   - Initialize an array for time slots, e.g., `[-1, -1, -1]` (for deadlines up to 3).
+   - Total profit starts at 0.
+
+3. **Schedule Jobs:**
+   - **Job A:** Deadline = 2, Profit = 100 → Place in slot 2.
+   - **Job C:** Deadline = 2, Profit = 27 → Slot 2 is taken, so place in slot 1.
+   - **Job D:** Deadline = 1, Profit = 25 → Slot 1 is taken, so skip.
+   - **Job B:** Deadline = 1, Profit = 19 → Place in slot 0.
+   - **Job E:** Deadline = 3, Profit = 15 → Place in slot 3 if available.
+
+4. **Result:** 
+   - The total profit is the sum of all placed jobs, maximizing the earnings under the given constraints.
+   
+This greedy method helps ensure we earn the most profit while respecting each job’s deadline.

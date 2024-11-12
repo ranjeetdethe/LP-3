@@ -1,0 +1,174 @@
+import numpy as np          # Import numpy for array handling and matrix operations.
+import threading            # Import threading for multithreading capabilities.
+import time                 # Import time to measure execution time.
+
+# Standard matrix multiplication
+def matrix_multiply(A, B):
+    # Initialize result matrix with zeros, same number of rows as A and columns as B.
+    result = np.zeros((A.shape[0], B.shape[1]))
+
+    # Loop over each row of matrix A.
+    for i in range(A.shape[0]):
+        # Loop over each column of matrix B.
+        for j in range(B.shape[1]):
+            # Loop to compute the dot product for each cell.
+            for k in range(A.shape[1]):
+                # Multiply corresponding elements and sum to get result[i][j].
+                result[i][j] += A[i][k] * B[k][j]
+
+    # Return the completed result matrix.
+    return result
+
+# One thread per row multiplication
+def row_multiply(A, B, result, row):
+    # Loop over each column of matrix B.
+    for j in range(B.shape[1]):
+        # Loop to compute the products for the specific row.
+        for k in range(A.shape[1]):
+            # Calculate and add up values for row in the result matrix.
+            result[row][j] += A[row][k] * B[k][j]
+
+# Matrix multiplication using threading, one thread per row.
+def matrix_multiply_threaded_row(A, B):
+    # Initialize result matrix with zeros.
+    result = np.zeros((A.shape[0], B.shape[1]))
+
+    # List to keep track of threads.
+    threads = []
+
+    # Loop over each row of matrix A.
+    for i in range(A.shape[0]):
+        # Create a new thread to handle each row.
+        thread = threading.Thread(target=row_multiply, args=(A, B, result, i))
+        
+        # Add the thread to the list.
+        threads.append(thread)
+        
+        # Start the thread for row processing.
+        thread.start()
+
+    # Wait for all threads to complete.
+    for thread in threads:
+        thread.join()
+
+    # Return the filled result matrix.
+    return result
+
+# One thread per cell multiplication
+def cell_multiply(A, B, result, i, j):
+    # Calculate and assign the dot product value for cell (i, j).
+    result[i][j] = sum(A[i][k] * B[k][j] for k in range(A.shape[1]))
+
+# Matrix multiplication using threading, one thread per cell.
+def matrix_multiply_threaded_cell(A, B):
+    # Initialize result matrix with zeros.
+    result = np.zeros((A.shape[0], B.shape[1]))
+
+    # List to keep track of threads.
+    threads = []
+
+    # Loop over each row of matrix A.
+    for i in range(A.shape[0]):
+        # Loop over each column of matrix B.
+        for j in range(B.shape[1]):
+            # Create a new thread for each cell calculation.
+            thread = threading.Thread(target=cell_multiply, args=(A, B, result, i, j))
+            
+            # Add the thread to the list.
+            threads.append(thread)
+            
+            # Start the thread for cell processing.
+            thread.start()
+
+    # Wait for all threads to complete.
+    for thread in threads:
+        thread.join()
+
+    # Return the completed result matrix.
+    return result
+
+# Performance analysis function
+def analyze_performance(A, B):
+    # Record the start time for standard multiplication.
+    start_time = time.time()
+    # Perform standard multiplication.
+    matrix_multiply(A, B)
+    # Calculate elapsed time for standard multiplication.
+    standard_time = time.time() - start_time
+
+    # Record start time for row-wise threaded multiplication.
+    start_time = time.time()
+    # Perform row-wise threaded multiplication.
+    matrix_multiply_threaded_row(A, B)
+    # Calculate elapsed time for row-wise threaded multiplication.
+    row_threaded_time = time.time() - start_time
+
+    # Record start time for cell-wise threaded multiplication.
+    start_time = time.time()
+    # Perform cell-wise threaded multiplication.
+    matrix_multiply_threaded_cell(A, B)
+    # Calculate elapsed time for cell-wise threaded multiplication.
+    cell_threaded_time = time.time() - start_time
+
+    # Return the times of each multiplication method for comparison.
+    return standard_time, row_threaded_time, cell_threaded_time
+
+# Sample matrices for testing.
+A = np.random.rand(100, 100)  # Create a 100x100 matrix A with random values.
+B = np.random.rand(100, 100)  # Create a 100x100 matrix B with random values.
+
+# Run performance analysis and collect output times for each method.
+performance_results = analyze_performance(A, B)
+
+# Print the execution time for each multiplication method.
+print("Standard Multiplication Time:", performance_results[0])
+print("Threaded Row-wise Multiplication Time:", performance_results[1])
+print("Threaded Cell-wise Multiplication Time:", performance_results[2])
+
+
+
+
+### 1. What is Matrix Multiplication?
+Matrix multiplication is a way to combine two matrices (let’s call them matrix A and matrix B) to get a new matrix (matrix C). To multiply two matrices:
+
+- Matrix A should have the same number of columns as the number of rows in matrix B.
+  For example, if A is a 2x3 matrix (2 rows and 3 columns), B must be a 3x2 matrix (3 rows and 2 columns).
+
+- The result matrix C will have the same number of rows as A and the same number of columns as B.
+
+### 2. How to Perform Matrix Multiplication?
+To find each element of the result matrix C:
+  1. Select a row from matrix A and a column from matrix B.
+  2. Multiply each element of the row from A with the corresponding element in the column of B.
+  3. Add up all these products to get a single number.
+  4. This number is placed in the result matrix C at the position of that row and column.
+
+Repeat this process for each row in A and each column in B to fill up the entire result matrix.
+
+### 3. Example of Matrix Multiplication
+Let's say:
+
+Matrix A = [[1, 2], 
+            [3, 4]] 
+and 
+Matrix B = [[5, 6], 
+            [7, 8]]
+
+To find the element in the first row and first column of C:
+  1. Take the first row of A [1, 2] and the first column of B [5, 7].
+  2. Multiply 1 * 5 + 2 * 7 = 5 + 14 = 19.
+
+So, C[0][0] = 19.
+
+### 4. Greedy Method for Matrix Multiplication Scheduling
+A greedy approach in general would prioritize actions that maximize immediate gains or minimize costs step-by-step without considering the whole problem at once.
+However, matrix multiplication is generally not done in a greedy manner because it’s a deterministic, fixed calculation: each cell in the resulting matrix depends on an exact set of multiplications.
+
+But we can use multithreading as a way to speed up the calculations by scheduling tasks (like calculating each row or each cell) concurrently,
+which allows us to take advantage of the available computing power. This scheduling approach ensures we complete the matrix multiplication as fast as possible without strictly being greedy.
+
+In short:
+  1. Each row or cell computation can be assigned to a separate thread.
+  2. By breaking down the task into multiple smaller parts and assigning them to threads, we optimize the process to minimize time.
+
+This approach, although not exactly "greedy," is a way to efficiently tackle matrix multiplication by dividing tasks based on available resources.

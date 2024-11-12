@@ -1,0 +1,77 @@
+
+The Fractional Knapsack Problem is a classic optimization problem where the goal is to maximize the total value of items in a knapsack, given a weight capacity. Unlike the 0/1 Knapsack Problem, where you can either take an item or leave it, in the Fractional Knapsack Problem, you can take fractions of an item, which allows for a greedy approach to be applied.
+
+Theory
+Problem Definition:
+
+You have a set of items, each with a weight and a value.
+You have a knapsack with a maximum weight capacity.
+You can take whole items or fractions of items.
+Greedy Approach:
+
+Calculate the value-to-weight ratio for each item.
+Sort the items by this ratio in descending order.
+Start adding items to the knapsack:
+If the entire item fits, add it completely.
+If not, take the fraction that fits and fill the knapsack to its capacity.
+Steps
+Calculate Value-to-Weight Ratio: For each item, compute its value divided by its weight.
+Sort Items: Sort the items based on the value-to-weight ratio.
+Add Items to Knapsack:
+If the item can fit entirely, add it.
+If not, add as much as can fit
+
+
+
+
+
+
+
+class Item:
+    def __init__(self, value, weight):
+        self.value = value
+        self.weight = weight
+        self.ratio = value / weight
+
+def fractional_knapsack(values, weights, capacity):
+    items = [Item(values[i], weights[i]) for i in range(len(values))]
+    items.sort(key=lambda x: x.ratio, reverse=True)
+    total_value = 0.0
+    for item in items:
+        if capacity == 0:
+            break
+        if item.weight <= capacity:
+            capacity -= item.weight
+            total_value += item.value
+        else:
+            total_value += item.ratio * capacity
+            capacity = 0
+    return total_value
+
+while True:
+    try:
+        print("Press Ctrl+C to terminate...")
+        n = int(input('Enter number of items: '))
+        values = [int(i) for i in input("Enter values of items: ").split()]
+        weights = [int(i) for i in input("Enter weights of items: ").split()]
+        capacity = int(input("Enter maximum weight: "))
+        
+        if len(values) != n or len(weights) != n:
+            print("Error: The number of values and weights must match the number of items.")
+            continue
+        
+        maximum_value = fractional_knapsack(values, weights, capacity)
+        print('The maximum value of items that can be carried:', maximum_value)
+    except KeyboardInterrupt:
+        print("\nTerminating the program.")
+        break
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+#output
+#Press Ctrl+C to terminate...
+#Enter number of items: 3
+#Enter values of items: 60 100 120
+#Enter weights of items: 10 20 30
+#Enter maximum weight: 50
+#The maximum value of items that can be carried: 240.0

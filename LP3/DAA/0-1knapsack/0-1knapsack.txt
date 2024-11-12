@@ -1,0 +1,55 @@
+Theory:
+0-1 Knapsack Problem
+The 0-1 Knapsack Problem is a classic optimization problem in which we need to determine the most valuable combination of items to include in a knapsack, given a weight limit. Each item can either be included in the knapsack (1) or excluded (0), hence the name "0-1."
+
+Problem Statement:
+You have a set of items, each with a weight and a value.
+You need to maximize the total value of the items included in the knapsack without exceeding the weight capacity.
+Dynamic Programming
+Dynamic Programming (DP) is an optimization technique used to solve complex problems by breaking them down into simpler subproblems. It is particularly useful for problems with overlapping subproblems and optimal substructure properties. In the context of the 0-1 Knapsack problem, DP can be used to build a table that keeps track of the maximum value that can be achieved with each weight limit.
+
+Steps for Dynamic Programming Approach:
+Initialization: Create a 2D array (table) where rows represent items and columns represent weight capacities.
+Filling the Table:
+If the weight of the current item is more than the current capacity, exclude it and carry forward the value from the previous item.
+If the weight of the current item is less than or equal to the current capacity, choose the maximum between including the item and excluding it.
+Backtracking: Once the table is filled, backtrack to determine which items were included in the optimal solution
+
+
+
+Code:
+
+def knapsack(values, weights, capacity):
+    n = len(values)
+    dp = [[0 for _ in range(capacity + 1)] for _ in range(n + 1)]
+
+    for i in range(1, n + 1):
+        for w in range(1, capacity + 1):
+            if weights[i - 1] <= w:
+                dp[i][w] = max(dp[i - 1][w], dp[i - 1][w - weights[i - 1]] + values[i - 1])
+            else:
+                dp[i][w] = dp[i - 1][w]
+
+    return dp[n][capacity]
+
+def main():
+    n = int(input("Enter the number of items: "))
+    values = [int(i) for i in input("Enter values of items: ").split()]
+    weights = [int(i) for i in input("Enter weights of items: ").split()]
+    capacity = int(input("Enter the maximum capacity of the knapsack: "))
+
+    if len(values) != n or len(weights) != n:
+        print("Error: The number of values and weights must match the number of items.")
+        return
+
+    max_value = knapsack(values, weights, capacity)
+    print("The maximum value that can be obtained in the knapsack is:", max_value)
+
+main()
+
+#output:
+#Enter the number of items: 3
+#Enter values of items: 60 100 120
+#Enter weights of items: 10 20 30
+#Enter the maximum capacity of the knapsack: 50
+#The maximum value that can be obtained in the knapsack is: 220
