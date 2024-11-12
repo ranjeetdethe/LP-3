@@ -1,0 +1,86 @@
+This Solidity code defines a contract named `MarksManagmtSys`, which manages student records in a simple structure. Let’s go through each part of the code:
+
+### SPDX License Identifier
+```solidity
+// SPDX-License-Identifier: UNLICENSED
+```
+This means that the code does not use a standard open-source license and is considered unlicensed.
+
+### Pragma Directive
+```solidity
+pragma solidity >=0.7.0 <0.9.0;
+```
+This specifies that the contract is compatible with Solidity versions 0.7.0 and above, but less than 0.9.0.
+
+### Contract Definition
+```solidity
+contract MarksManagmtSys {
+```
+This line defines a contract named `MarksManagmtSys`, which contains the logic for managing student records.
+
+### Student Structure
+```solidity
+struct StudentStruct {
+    uint ID;
+    string fName;
+    string lName;
+    uint marks;
+}
+```
+The `StudentStruct` structure is created to hold student details:
+- `ID`: A unique identifier for each student.
+- `fName`: First name of the student.
+- `lName`: Last name of the student.
+- `marks`: The marks obtained by the student.
+
+### State Variables
+```solidity
+address owner;
+uint public stdCount = 0;
+StudentStruct[] stdRecords;
+```
+- `owner`: Stores the address of the contract owner (the one who deployed the contract).
+- `stdCount`: A public counter that keeps track of the number of students added to the system.
+- `stdRecords`: An array of `StudentStruct` that stores all student records.
+
+### Constructor
+```solidity
+constructor() {
+    owner = msg.sender;
+}
+```
+The constructor is executed once when the contract is deployed. It sets the contract owner to `msg.sender` (the address that deployed the contract).
+
+### `addNewRecords` Function
+```solidity
+function addNewRecords(uint _ID,
+                       string memory _fName,
+                       string memory _lName,
+                       uint _marks) public payable {
+    stdCount = stdCount + 1;
+    stdRecords.push(StudentStruct(_ID, _fName, _lName, _marks));
+}
+```
+- This function allows anyone to add a new student record to the contract.
+- Parameters:
+  - `_ID`: Unique ID for the student.
+  - `_fName`: First name.
+  - `_lName`: Last name.
+  - `_marks`: Marks obtained.
+- The function increments `stdCount` by 1 each time a new record is added.
+- It then adds a new `StudentStruct` instance (using the provided details) to the `stdRecords` array.
+
+### `getAllRecords` Function
+```solidity
+function getAllRecords() public view returns(StudentStruct[] memory) {
+    return stdRecords;
+}
+```
+- This function returns all student records.
+- The `view` keyword specifies that the function does not modify the blockchain state.
+- It returns `stdRecords`, which contains all `StudentStruct` entries.
+
+### Summary
+- The contract allows storing and managing student details (ID, name, and marks).
+- `addNewRecords` is used to add a new student record, and `getAllRecords` returns all records.
+- `stdCount` keeps track of the number of student entries.

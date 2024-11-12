@@ -1,0 +1,81 @@
+This Solidity code defines a simple `Bank` smart contract that allows an account holder to deposit and withdraw funds, and to view the balance. Let's break down each part in detail:
+
+### SPDX License Identifier
+```solidity
+// SPDX-License-Identifier: UNLICENSED 
+// license is important to compile our code
+```
+The SPDX license identifier `UNLICENSED` means that this code is not licensed under any standard open-source license, but instead, the user must accept it as unlicensed code.
+
+### Pragma Directive
+```solidity
+pragma solidity ^0.8.0;
+```
+This line specifies the Solidity compiler version (0.8.x) for this contract. The caret (`^`) indicates compatibility with versions 0.8.0 and above, but less than 0.9.0.
+
+### Contract Definition
+```solidity
+contract Bank {
+```
+This line defines a new contract called `Bank`. In Solidity, a contract is similar to a class in other languages and can contain variables, functions, and constructors.
+
+### State Variables
+```solidity
+address public accHolder;
+uint256 balance = 0;
+```
+- `accHolder`: Stores the Ethereum address of the account holder. `public` allows external access, and `address` is the type used to store an Ethereum address.
+- `balance`: Stores the account balance. It is a `uint256` (an unsigned integer) initialized to 0.
+
+### Constructor
+```solidity
+constructor() {
+    accHolder = msg.sender;
+}
+```
+The constructor is executed once when the contract is deployed. It assigns the `msg.sender` (the address that deployed the contract) to `accHolder`, making this address the initial account holder.
+
+### `withdraw` Function
+```solidity
+function withdraw() payable public {
+    require(msg.sender == accHolder, "You are not the account holder");
+    require(balance > 0, "You don't have enough balance.");
+    payable(msg.sender).transfer(balance);
+    balance = 0;
+}
+```
+- This function allows the account holder to withdraw all funds from the contract.
+- `require` statements ensure that:
+  - The caller is the account holder.
+  - The balance is greater than 0.
+- If the requirements are met, the balance is sent to the account holder’s address, and `balance` is reset to 0.
+
+### `deposit` Function
+```solidity
+function deposit() public payable {
+    require(msg.sender == accHolder, "You are not the account holder");
+    require(msg.value > 0, "Deposit amount should be greater than 0.");
+    balance += msg.value;
+}
+```
+- This function allows the account holder to deposit Ether into the contract.
+- `require` statements ensure that:
+  - The caller is the account holder.
+  - The deposit amount (`msg.value`) is greater than 0.
+- If the requirements are met, the deposited amount (`msg.value`) is added to `balance`.
+
+### `showBalance` Function
+```solidity
+function showBalance() public view returns(uint) {
+    require(msg.sender == accHolder, "You are not the account holder");
+    return balance;
+}
+```
+- This function allows the account holder to view the balance in the contract.
+- The `require` statement checks if the caller is the account holder.
+- If the requirement is met, it returns the current `balance`.
+
+### Summary
+- Only the account holder (the address that deployed the contract) can deposit, withdraw, or view the balance.
+- `deposit` and `withdraw` functions handle deposits and withdrawals of Ether.
+- `showBalance` provides the current balance.
